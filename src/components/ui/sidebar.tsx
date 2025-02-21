@@ -91,7 +91,7 @@ function FolderTree({ folders, parentId, level }: FolderTreeProps) {
 }
 
 export function Sidebar() {
-  const { folders, notifications, user, moveDocument } = useStore();
+  const { folders, notifications, user, moveDocument, addFolder, updateFolder, deleteFolder } = useStore();
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -102,6 +102,31 @@ export function Sidebar() {
     e.preventDefault();
     const documentId = e.dataTransfer.getData('text/plain');
     moveDocument(documentId, folderId);
+  };
+
+  const handleAddFolder = () => {
+    const folderName = prompt('Nome da nova pasta:');
+    if (folderName) {
+      addFolder({
+        name: folderName,
+        parentId: null,
+        type: 'folder',
+        departmentId: user?.departmentId || '',
+      });
+    }
+  };
+
+  const handleEditFolder = (folderId: string) => {
+    const folderName = prompt('Novo nome da pasta:');
+    if (folderName) {
+      updateFolder(folderId, { name: folderName });
+    }
+  };
+
+  const handleDeleteFolder = (folderId: string) => {
+    if (confirm('Tem certeza que deseja excluir esta pasta?')) {
+      deleteFolder(folderId);
+    }
   };
 
   return (
@@ -116,33 +141,33 @@ export function Sidebar() {
 
         <button className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-6">
           <Plus className="h-4 w-4" />
-          <span>New Document</span>
+          <span>Novo Documento</span>
         </button>
 
         <div className="space-y-6">
           <div className="space-y-1">
             <button className="w-full flex items-center space-x-2 px-2 py-1.5 rounded-lg hover:bg-gray-100">
               <Inbox className="h-4 w-4" />
-              <span className="text-sm">Inbox</span>
+              <span className="text-sm">Caixa de Entrada</span>
             </button>
             <button className="w-full flex items-center space-x-2 px-2 py-1.5 rounded-lg hover:bg-gray-100">
               <Star className="h-4 w-4" />
-              <span className="text-sm">Starred</span>
+              <span className="text-sm">Favoritos</span>
             </button>
             <button className="w-full flex items-center space-x-2 px-2 py-1.5 rounded-lg hover:bg-gray-100">
               <Archive className="h-4 w-4" />
-              <span className="text-sm">Archived</span>
+              <span className="text-sm">Arquivados</span>
             </button>
             <button className="w-full flex items-center space-x-2 px-2 py-1.5 rounded-lg hover:bg-gray-100">
               <Trash2 className="h-4 w-4" />
-              <span className="text-sm">Trash</span>
+              <span className="text-sm">Lixeira</span>
             </button>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-sm font-semibold text-gray-500">FOLDERS</h2>
-              <button className="p-1 hover:bg-gray-100 rounded">
+              <h2 className="text-sm font-semibold text-gray-500">PASTAS</h2>
+              <button className="p-1 hover:bg-gray-100 rounded" onClick={handleAddFolder}>
                 <Plus className="h-3 w-3" />
               </button>
             </div>
@@ -160,12 +185,12 @@ export function Sidebar() {
         <div className="space-y-1">
           <button className="w-full flex items-center space-x-2 px-2 py-1.5 rounded-lg hover:bg-gray-100">
             <Users className="h-4 w-4" />
-            <span className="text-sm">Team</span>
+            <span className="text-sm">Equipe</span>
           </button>
           <button className="w-full flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-gray-100">
             <div className="flex items-center space-x-2">
               <Bell className="h-4 w-4" />
-              <span className="text-sm">Notifications</span>
+              <span className="text-sm">Notificações</span>
             </div>
             {unreadCount > 0 && (
               <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
@@ -175,7 +200,7 @@ export function Sidebar() {
           </button>
           <button className="w-full flex items-center space-x-2 px-2 py-1.5 rounded-lg hover:bg-gray-100">
             <Settings className="h-4 w-4" />
-            <span className="text-sm">Settings</span>
+            <span className="text-sm">Configurações</span>
           </button>
         </div>
       </div>

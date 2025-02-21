@@ -11,9 +11,9 @@ export function Notifications() {
 
   return (
     <div className="p-4 bg-white border rounded-lg shadow-md">
-      <h2 className="text-lg font-semibold mb-4">Notifications</h2>
+      <h2 className="text-lg font-semibold mb-4">Notificações</h2>
       {notifications.length === 0 ? (
-        <p className="text-gray-500">No notifications</p>
+        <p className="text-gray-500">Sem notificações</p>
       ) : (
         <ul className="space-y-4">
           {notifications.map((notification) => (
@@ -24,16 +24,16 @@ export function Notifications() {
               }`}
             >
               <div className="flex-shrink-0">
-                {notification.type === 'document' && (
+                {notification.type === 'documento' && (
                   <Bell className="h-6 w-6 text-blue-600" />
                 )}
                 {notification.type === 'workflow' && (
                   <CheckCircle className="h-6 w-6 text-green-600" />
                 )}
-                {notification.type === 'system' && (
+                {notification.type === 'sistema' && (
                   <AlertCircle className="h-6 w-6 text-red-600" />
                 )}
-                {notification.type === 'deadline' && (
+                {notification.type === 'prazo' && (
                   <Clock className="h-6 w-6 text-yellow-600" />
                 )}
               </div>
@@ -49,7 +49,7 @@ export function Notifications() {
                   onClick={() => handleMarkAsRead(notification.id)}
                   className="text-blue-600 hover:underline text-sm"
                 >
-                  Mark as read
+                  Marcar como lida
                 </button>
               )}
             </li>

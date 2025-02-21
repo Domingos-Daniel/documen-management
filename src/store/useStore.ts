@@ -116,6 +116,12 @@ interface StoreState {
   addNotification: (notification: Omit<Notification, 'id' | 'createdAt'>) => void;
   markNotificationAsRead: (id: string) => void;
   clearNotifications: () => void;
+
+  // User operations
+  addUser: (user: Omit<User, 'id'>) => void;
+  updateUser: (id: string, data: Partial<User>) => void;
+  deleteUser: (id: string) => void;
+  setUserRole: (userId: string, role: User['role']) => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
@@ -292,5 +298,40 @@ export const useStore = create<StoreState>((set) => ({
   clearNotifications: () =>
     set((state) => ({
       notifications: state.notifications.filter((notif) => !notif.read),
+    })),
+
+  // User operations
+  addUser: (user) =>
+    set((state) => ({
+      users: [
+        ...state.users,
+        {
+          ...user,
+          id: crypto.randomUUID(),
+        },
+      ],
+    })),
+
+  updateUser: (id, data) =>
+    set((state) => ({
+      users: state.users.map((user) =>
+        user.id === id
+          ? { ...user, ...data }
+          : user
+      ),
+    })),
+
+  deleteUser: (id) =>
+    set((state) => ({
+      users: state.users.filter((user) => user.id !== id),
+    })),
+
+  setUserRole: (userId, role) =>
+    set((state) => ({
+      users: state.users.map((user) =>
+        user.id === userId
+          ? { ...user, role }
+          : user
+      ),
     })),
 }));
