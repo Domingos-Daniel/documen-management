@@ -118,7 +118,7 @@ export function MainContent() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search documents..."
+                placeholder="Pesquisar documentos..."
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               />
             </div>
@@ -127,7 +127,7 @@ export function MainContent() {
               onClick={() => document.getElementById('fileInput')?.click()}
             >
               <Upload className="h-4 w-4" />
-              <span>Upload</span>
+              <span>Carregar</span>
             </button>
             <input
               id="fileInput"
@@ -163,11 +163,11 @@ export function MainContent() {
           </div>
         </div>
 
-        {uploading && <p>Uploading...</p>}
+        {uploading && <p>Carregando...</p>}
         {preview && (
           <div className="mb-6">
-            <h3 className="font-medium">Preview</h3>
-            <img src={preview} alt="Preview" className="w-full h-auto rounded-lg" />
+            <h3 className="font-medium">Pré-visualização</h3>
+            <img src={preview} alt="Pré-visualização" className="w-full h-auto rounded-lg" />
           </div>
         )}
 
@@ -196,7 +196,7 @@ export function MainContent() {
                 </button>
               </div>
               <p className="text-xs text-gray-400 mt-2">
-                Updated {document.updatedAt.toLocaleDateString()}
+                Atualizado em {document.updatedAt.toLocaleDateString()}
               </p>
             </div>
           ))}
