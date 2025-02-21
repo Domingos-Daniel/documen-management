@@ -87,8 +87,18 @@ function FolderTree({ folders, parentId, level }: FolderTreeProps) {
 }
 
 export function Sidebar() {
-  const { folders, notifications } = useStore();
+  const { folders, notifications, user, moveDocument } = useStore();
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, folderId: string) => {
+    e.preventDefault();
+    const documentId = e.dataTransfer.getData('text/plain');
+    moveDocument(documentId, folderId);
+  };
 
   return (
     <div className="w-64 bg-white border-r h-screen flex flex-col">
@@ -132,7 +142,12 @@ export function Sidebar() {
                 <Plus className="h-3 w-3" />
               </button>
             </div>
-            <FolderTree folders={folders} parentId={null} level={0} />
+            <div
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, null)}
+            >
+              <FolderTree folders={folders} parentId={null} level={0} />
+            </div>
           </div>
         </div>
       </div>

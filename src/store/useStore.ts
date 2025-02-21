@@ -22,6 +22,7 @@ interface Folder {
   departmentId: string;
   createdAt: Date;
   updatedAt: Date;
+  permissions: Record<string, 'read' | 'write' | 'none'>;
 }
 
 interface Document {
@@ -98,6 +99,7 @@ interface StoreState {
   addFolder: (folder: Omit<Folder, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateFolder: (id: string, data: Partial<Folder>) => void;
   deleteFolder: (id: string) => void;
+  setFolderPermissions: (folderId: string, permissions: Record<string, 'read' | 'write' | 'none'>) => void;
   
   // Document operations
   addDocument: (document: Omit<Document, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -147,6 +149,7 @@ export const useStore = create<StoreState>((set) => ({
           id: crypto.randomUUID(),
           createdAt: new Date(),
           updatedAt: new Date(),
+          permissions: {},
         },
       ],
     })),
@@ -163,6 +166,15 @@ export const useStore = create<StoreState>((set) => ({
   deleteFolder: (id) =>
     set((state) => ({
       folders: state.folders.filter((folder) => folder.id !== id),
+    })),
+
+  setFolderPermissions: (folderId, permissions) =>
+    set((state) => ({
+      folders: state.folders.map((folder) =>
+        folder.id === folderId
+          ? { ...folder, permissions, updatedAt: new Date() }
+          : folder
+      ),
     })),
 
   // Document operations
