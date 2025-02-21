@@ -67,7 +67,7 @@ interface WorkflowStep {
 interface Notification {
   id: string;
   userId: string;
-  type: 'document' | 'workflow' | 'system';
+  type: 'document' | 'workflow' | 'system' | 'deadline';
   title: string;
   message: string;
   read: boolean;

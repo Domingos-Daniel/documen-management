@@ -22,7 +22,7 @@ interface FolderTreeProps {
 
 function FolderTree({ folders, parentId, level }: FolderTreeProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const { selectedFolderId, setSelectedFolder } = useStore();
+  const { selectedFolderId, setSelectedFolder, user } = useStore();
 
   const toggleFolder = (folderId: string) => {
     const newExpanded = new Set(expanded);
@@ -43,6 +43,10 @@ function FolderTree({ folders, parentId, level }: FolderTreeProps) {
       {foldersByParent.map((folder) => {
         const hasChildren = folders.some((f) => f.parentId === folder.id);
         const isExpanded = expanded.has(folder.id);
+
+        const hasPermission = folder.permissions[user?.role || 'none'] !== 'none';
+
+        if (!hasPermission) return null;
 
         return (
           <div key={folder.id}>

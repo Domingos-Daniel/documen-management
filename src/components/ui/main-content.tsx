@@ -79,6 +79,16 @@ export function MainContent() {
     reader.readAsDataURL(file);
   };
 
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    handleFileUpload(files);
+  };
+
   const filteredDocuments = documents
     .filter((doc) => {
       if (selectedFolderId && doc.folderId !== selectedFolderId) return false;
@@ -161,65 +171,36 @@ export function MainContent() {
           </div>
         )}
 
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredDocuments.map((document) => (
-              <div
-                key={document.id}
-                className="p-4 bg-white border rounded-lg hover:shadow-md transition-shadow"
-              >
-                <div className="aspect-square bg-gray-50 rounded-lg mb-3 flex items-center justify-center">
-                  {getDocumentIcon(document.type)}
-                </div>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium truncate">{document.name}</h3>
-                    <p className="text-sm text-gray-500">
-                      {formatFileSize(document.size)}
-                    </p>
-                  </div>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <MoreVertical className="h-4 w-4" />
-                  </button>
-                </div>
-                <p className="text-xs text-gray-400 mt-2">
-                  Updated {document.updatedAt.toLocaleDateString()}
-                </p>
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          {filteredDocuments.map((document) => (
+            <div
+              key={document.id}
+              className="p-4 bg-white border rounded-lg hover:shadow-md transition-shadow"
+            >
+              <div className="aspect-square bg-gray-50 rounded-lg mb-3 flex items-center justify-center">
+                {getDocumentIcon(document.type)}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white border rounded-lg">
-            <div className="grid grid-cols-12 gap-4 p-4 border-b text-sm font-medium text-gray-500">
-              <div className="col-span-6">Name</div>
-              <div className="col-span-2">Size</div>
-              <div className="col-span-3">Last Modified</div>
-              <div className="col-span-1"></div>
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium truncate">{document.name}</h3>
+                  <p className="text-sm text-gray-500">
+                    {formatFileSize(document.size)}
+                  </p>
+                </div>
+                <button className="p-1 hover:bg-gray-100 rounded">
+                  <MoreVertical className="h-4 w-4" />
+                </button>
+              </div>
+              <p className="text-xs text-gray-400 mt-2">
+                Updated {document.updatedAt.toLocaleDateString()}
+              </p>
             </div>
-            {filteredDocuments.map((document) => (
-              <div
-                key={document.id}
-                className="grid grid-cols-12 gap-4 p-4 hover:bg-gray-50 items-center"
-              >
-                <div className="col-span-6 flex items-center space-x-3">
-                  {getDocumentIcon(document.type)}
-                  <span className="truncate">{document.name}</span>
-                </div>
-                <div className="col-span-2 text-sm text-gray-500">
-                  {formatFileSize(document.size)}
-                </div>
-                <div className="col-span-3 text-sm text-gray-500">
-                  {document.updatedAt.toLocaleDateString()}
-                </div>
-                <div className="col-span-1 text-right">
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <MoreVertical className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </div>
   );
