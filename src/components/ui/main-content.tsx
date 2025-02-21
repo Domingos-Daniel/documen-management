@@ -47,8 +47,37 @@ const formatFileSize = (bytes: number) => {
 };
 
 export function MainContent() {
-  const { documents, selectedFolderId, searchQuery, filters } = useStore();
+  const { documents, selectedFolderId, searchQuery, filters, addDocument } = useStore();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [metadata, setMetadata] = useState({ title: '', description: '', tags: '' });
+
+  const handleFileUpload = (files: FileList) => {
+    setUploading(true);
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const url = e.target?.result as string;
+      setPreview(url);
+      addDocument({
+        name: file.name,
+        description: metadata.description,
+        folderId: selectedFolderId || '',
+        type: file.type,
+        url,
+        size: file.size,
+        status: 'draft',
+        createdBy: 'currentUserId', // Replace with actual user ID
+        assignedTo: null,
+        workflowId: null,
+        tags: metadata.tags.split(',').map(tag => tag.trim()),
+        metadata: { title: metadata.title, description: metadata.description },
+      });
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const filteredDocuments = documents
     .filter((doc) => {
@@ -83,10 +112,19 @@ export function MainContent() {
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               />
             </div>
-            <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              onClick={() => document.getElementById('fileInput')?.click()}
+            >
               <Upload className="h-4 w-4" />
               <span>Upload</span>
             </button>
+            <input
+              id="fileInput"
+              type="file"
+              className="hidden"
+              onChange={(e) => handleFileUpload(e.target.files!)}
+            />
             <button className="p-2 border rounded-lg hover:bg-gray-50 bg-white">
               <Filter className="h-4 w-4" />
             </button>
@@ -114,6 +152,14 @@ export function MainContent() {
             </div>
           </div>
         </div>
+
+        {uploading && <p>Uploading...</p>}
+        {preview && (
+          <div className="mb-6">
+            <h3 className="font-medium">Preview</h3>
+            <img src={preview} alt="Preview" className="w-full h-auto rounded-lg" />
+          </div>
+        )}
 
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
